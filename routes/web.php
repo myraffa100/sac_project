@@ -11,10 +11,15 @@ Route::get('/', function () {
 Route::get('register', [AuthController::class, 'showRegisterForm']);
 Route::post('register', [AuthController::class, 'register']);
 // login
-Route::get('login', [AuthController::class, 'showLoginForm'])->name('login.form');
+Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
 
-// dashboard
-Route::get('dashboard', function () {
-    return view('dashboard');
+
+Route::middleware('auth')->group(function () {
+    // dashboard
+    Route::get('dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

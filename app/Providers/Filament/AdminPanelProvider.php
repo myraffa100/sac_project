@@ -17,6 +17,11 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
+// use App\Filament\Widgets\StatsOverview;
+
+
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -27,18 +32,43 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName('Sahabat Akutik Club')
             ->colors([
                 'primary' => Color::Amber,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                // Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // StatsOverview::class,
+              
+                // TrainingChart::class, // Widget tambahan
+            ])
+            ->navigationItems([
+                NavigationItem::make('Dashboard')
+                    ->icon('heroicon-o-home')
+                    ->url('/admin'),
+
+                NavigationItem::make('Attendances')
+                    ->icon('heroicon-o-calendar')
+                    ->url('/admin/attendances'),
+
+                NavigationItem::make('Members')
+                    ->icon('heroicon-o-user-group')
+                    ->url('/admin/members'),
+
+                NavigationItem::make('Payments')
+                    ->icon('heroicon-o-cash')
+                    ->url('/admin/payments'),
+
+                NavigationItem::make('Schedules')
+                    ->icon('heroicon-o-clock')
+                    ->url('/admin/schedules'),
+
+
             ])
             ->middleware([
                 EncryptCookies::class,

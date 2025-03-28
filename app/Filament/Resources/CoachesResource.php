@@ -88,6 +88,7 @@ class CoachesResource extends Resource
                     }),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -105,6 +106,7 @@ class CoachesResource extends Resource
             'index' => Pages\ListCoaches::route('/'),
             'create' => Pages\CreateCoaches::route('/create'),
             'edit' => Pages\EditCoaches::route('/{record}/edit'),
+            'view' => Pages\ViewCoaches::route('/{record}'),
         ];
     }
 }

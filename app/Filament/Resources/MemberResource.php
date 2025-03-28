@@ -83,6 +83,7 @@ class MemberResource extends Resource
                 // Tambahkan filter jika diperlukan
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -103,6 +104,7 @@ class MemberResource extends Resource
             'index' => Pages\ListMembers::route('/'),
             'create' => Pages\CreateMember::route('/create'),
             'edit' => Pages\EditMember::route('/{record}/edit'),
+            'view' => Pages\ViewMember::route('/{record}'),
         ];
     }
 }

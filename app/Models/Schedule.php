@@ -19,6 +19,8 @@ class Schedule extends Model
         'jam_selesai',
         'status',
         'sesi',
+        'start_date',
+        'end_date'
     ];
 
     // Relasi ke Member

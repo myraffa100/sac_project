@@ -11,13 +11,11 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Carbon;
 
 class ScheduleResource extends Resource
 {
     protected static ?string $model = Schedule::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
     public static function form(Form $form): Form
@@ -26,38 +24,48 @@ class ScheduleResource extends Resource
             ->schema([
                 Forms\Components\Select::make('member_id')
                     ->label('Member')
-                    ->options(fn() => Member::pluck('nama', 'id')->toArray()) // Optimasi Query
+                    ->options(fn() => Member::pluck('nama', 'id')->toArray())
                     ->searchable()
                     ->required(),
 
                 Forms\Components\Select::make('coach_id')
                     ->label('Coach')
-                    ->options(fn() => Coach::pluck('nama', 'id')->toArray()) // Optimasi Query
+                    ->options(fn() => Coach::pluck('nama', 'id')->toArray())
                     ->searchable()
                     ->required(),
 
-                Forms\Components\Select::make('hari')
-                    ->label('Hari')
+                    Forms\Components\Select::make('hari')
+                    ->label('Training Day')
                     ->options([
-                        'Senin' => 'Senin',
-                        'Selasa' => 'Selasa',
-                        'Rabu' => 'Rabu',
-                        'Kamis' => 'Kamis',
-                        'Jumat' => 'Jumat',
-                        'Sabtu' => 'Sabtu',
-                        'Minggu' => 'Minggu',
+                        'Monday' => 'Monday',
+                        'Tuesday' => 'Tuesday',
+                        'Wednesday' => 'Wednesday',
+                        'Thursday' => 'Thursday',
+                        'Friday' => 'Friday',
+                        'Saturday' => 'Saturday',
+                        'Sunday' => 'Sunday',
                     ])
                     ->required(),
-
+                
                 Forms\Components\Select::make('sesi')
                     ->label('Sesi')
                     ->options([
                         'pagi' => 'Sesi Pagi (08:00 - 10:00)',
                         'sore' => 'Sesi Sore (16:00 - 17:30)',
                     ])
-                    ->default('Sore')
+                    ->default('sore')
                     ->required(),
 
+                Forms\Components\DatePicker::make('start_date')
+                    ->label('Tanggal Mulai')
+                    ->default(Carbon::now())
+                    ->required(),
+
+                Forms\Components\DatePicker::make('end_date')
+                    ->label('Tanggal Berakhir')
+                    ->default(fn($get) => Carbon::parse($get('start_date'))->addMonth())
+
+                    ->required(),
             ]);
     }
 
@@ -76,30 +84,24 @@ class ScheduleResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('hari')
-                    ->label('Hari')
+                    ->label('Hari Latihan')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('sesi')
-                    ->label('Sesi')->sortable()
-                    ->formatStateUsing(fn($state) => $state === 'pagi' ? 'Sesi Pagi (08:00 - 10:00)' : 'Sesi Sore (15:00 - 18:00)')
-                    ->sortable(),
+                    ->label('Sesi')
+                    ->sortable()
+                    ->formatStateUsing(fn($state) => $state === 'pagi' ? 'Sesi Pagi (08:00 - 10:00)' : 'Sesi Sore (16:00 - 17:30)'),
 
+                Tables\Columns\TextColumn::make('start_date')
+                    ->label('Mulai')
+                    ->date(),
 
-                Tables\Columns\BadgeColumn::make('status')
-                    ->label('Status')
-                    ->color(fn($state) => $state === 'aktif' ? 'success' : 'danger') // Perbaikan warna badge
-                    ->formatStateUsing(fn($state) => ucfirst($state))
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('end_date')
+                    ->label('Berakhir')
+                    ->date(),
             ])
-            // ->filters([
-            //     Tables\Filters\SelectFilter::make('status')
-            //         ->label('Status')
-            //         ->options([
-            //             'aktif' => 'Aktif',
-            //             'nonaktif' => 'Nonaktif',
-            //         ]),
-            // ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -119,6 +121,7 @@ class ScheduleResource extends Resource
             'index' => Pages\ListSchedules::route('/'),
             'create' => Pages\CreateSchedule::route('/create'),
             'edit' => Pages\EditSchedule::route('/{record}/edit'),
+            'view' => Pages\ViewSchedule::route('/{record}'),
         ];
     }
 }

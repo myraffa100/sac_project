@@ -19,7 +19,10 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
-// use App\Filament\Widgets\StatsOverview;
+use App\Filament\Widgets\MemberStatsWidget;
+use App\Filament\Widgets\CoachScheduleWidget;
+use App\Filament\Widgets\DailyScheduleWidget;
+
 
 
 
@@ -43,9 +46,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                // StatsOverview::class,
-              
-                // TrainingChart::class, // Widget tambahan
+                MemberStatsWidget::class,
+                DailyScheduleWidget::class,
+                CoachScheduleWidget::class,
             ])
             ->navigationItems([
                 NavigationItem::make('Dashboard')
